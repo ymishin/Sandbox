@@ -1,1 +1,1 @@
-An O(1) implementataion of cache with LFU eviction scheme.
+An O(1) implementation of cache with LFU eviction scheme.
