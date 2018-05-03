@@ -22,6 +22,9 @@
         <!-- Plugins -->
         <jetty.version>9.3.7.v20160115</jetty.version>
         <maven.war.plugin.version>3.1.0</maven.war.plugin.version>
+        
+        <deltaspike.version>1.7.2</deltaspike.version>
+        <javaxee.version>8.0</javaxee.version>
     </properties>
 
     <repositories>
@@ -72,6 +75,22 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+        	<groupId>javax</groupId>
+        	<artifactId>javaee-api</artifactId>
+          <version>${javaxee.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-data-module-api</artifactId>
+            <version>${deltaspike.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-data-module-impl</artifactId>
+            <version>${deltaspike.version}</version>
         </dependency>
     </dependencies>
 
