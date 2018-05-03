@@ -7,10 +7,10 @@
 #include <unordered_map>
 
 template<typename Key, typename E>
-class FreqNode;
+struct FreqNode;
 
 template<typename Key, typename E>
-class CacheElement;
+struct CacheElement;
 
 // ----------------------------------------------------------------------------
 
@@ -27,6 +27,7 @@ public:
     this->capacity = capacity;
   }
 
+  // Get element from cache. Each call increases element usage frequence by 1.
   bool get(const Key &k, E *e)
   {
     if (key2Element.count(k) == 0)
@@ -38,37 +39,54 @@ public:
       CacheElementIt cacheElementIt = key2Element[k];
       FreqNodeIt freqNodeIt = cacheElementIt->freqNodeIt;
       int freq = freqNodeIt->freq + 1;
-      freqNodeIt++;
-      if (freqNodeIt == freqNodes.end() || (freqNodeIt->freq > freq))
+      FreqNodeIt nextFreqNodeIt = std::next(freqNodeIt, 1);
+      if (nextFreqNodeIt == freqNodes.end() || (nextFreqNodeIt->freq > freq))
       {
-        freqNodeIt = freqNodes.insert(freqNodeIt, FreqNode<Key, E>(freq));
+        nextFreqNodeIt = freqNodes.insert(nextFreqNodeIt, FreqNode<Key, E>(freq));
       }
-      freqNodeIt->cacheElements.splice(
-        freqNodeIt->cacheElements.begin(),
-        cacheElementIt->freqNodeIt->cacheElements,
-        cacheElementIt);
-      if (cacheElementIt->freqNodeIt->cacheElements.size() == 0)
+      nextFreqNodeIt->cacheElements.splice(
+        nextFreqNodeIt->cacheElements.begin(),
+        freqNodeIt->cacheElements, cacheElementIt);
+      if (freqNodeIt->cacheElements.size() == 0)
       {
-        freqNodes.erase(cacheElementIt->freqNodeIt);
+        freqNodes.erase(freqNodeIt);
       }
-      cacheElementIt->freqNodeIt = freqNodeIt;
+      cacheElementIt->freqNodeIt = nextFreqNodeIt;
       *e = cacheElementIt->e;
       return true;
     }
   }
 
-  void insert(const Key &k, const E &e, bool resetFreq)
+  // Insert element into cache. Least frequently used element will be removed if maximum capacity is reached.
+  void insert(const Key &k, const E &e, bool forceInsert)
   {
+    // Remove LFU element from cache if maximum capacity is reached
     if (key2Element.count(k) == 0 && size == capacity)
     {
-      key2Element.erase(freqNodes.front().cacheElements.back().k);
-      freqNodes.front().cacheElements.pop_back();
-      if (freqNodes.front().cacheElements.size() == 0)
+      auto &frontCacheElements = freqNodes.front().cacheElements;
+      key2Element.erase(frontCacheElements.back().k);
+      frontCacheElements.pop_back();
+      if (frontCacheElements.size() == 0)
       {
         freqNodes.pop_front();
       }
       --size;
     }
+    // Remove element with the same key if already in cache
+    if (key2Element.count(k) > 0)
+    {
+      if (!forceInsert) return;
+      CacheElementIt cacheElementIt = key2Element[k];      
+      FreqNodeIt freqNodeIt = cacheElementIt->freqNodeIt;
+      freqNodeIt->cacheElements.erase(cacheElementIt);
+      key2Element.erase(k);
+      if (freqNodeIt->cacheElements.size() == 0)
+      {
+        freqNodes.erase(freqNodeIt);
+      }
+      --size;
+    }
+    // Insert new element into cache
     FreqNodeIt freqNodeIt = freqNodes.begin();
     if (freqNodeIt == freqNodes.end() || (freqNodeIt->freq > 1))
     {
@@ -89,9 +107,8 @@ private:
 // ----------------------------------------------------------------------------
 
 template<typename Key, typename E>
-class CacheElement
+struct CacheElement
 {
-public:
   typedef typename std::list<FreqNode<Key, E>>::iterator FreqNodeIt;
 
   CacheElement(const Key &k, const E &e, FreqNodeIt freqNodeIt)
@@ -107,9 +124,8 @@ public:
 };
 
 template<typename Key, typename E>
-class FreqNode
+struct FreqNode
 {
-public:
   FreqNode(const int freq)
   {
     this->freq = freq;
