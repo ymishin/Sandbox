@@ -1,6 +1,8 @@
 #ifndef C_LFU_CACHE_HPP__
 #define C_LFU_CACHE_HPP__
 
+// ----------------------------------------------------------------------------
+
 #include <list>
 #include <unordered_map>
 
@@ -8,35 +10,9 @@ template<typename Key, typename E>
 class FreqNode;
 
 template<typename Key, typename E>
-class CacheElement
-{
-public:
-  typedef typename std::list<FreqNode<Key, E>>::iterator FreqNodeIt;
+class CacheElement;
 
-  CacheElement(const Key &k, const E &e, FreqNodeIt freqNodeIt)
-  {
-    this->k = k;
-    this->e = e;
-    this->freqNodeIt = freqNodeIt;
-  }
-
-  Key k;
-  E e;
-  FreqNodeIt freqNodeIt;
-};
-
-template<typename Key, typename E>
-class FreqNode
-{
-public:
-  FreqNode(const int freq)
-  {
-    this->freq = freq;
-  }
-
-  int freq;
-  std::list<CacheElement<Key, E>> cacheElements;
-};
+// ----------------------------------------------------------------------------
 
 template<typename Key, typename E>
 class LFUCache
@@ -109,5 +85,40 @@ private:
   std::list<FreqNode<Key, E>> freqNodes;
   std::unordered_map<Key, CacheElementIt> key2Element;
 };
+
+// ----------------------------------------------------------------------------
+
+template<typename Key, typename E>
+class CacheElement
+{
+public:
+  typedef typename std::list<FreqNode<Key, E>>::iterator FreqNodeIt;
+
+  CacheElement(const Key &k, const E &e, FreqNodeIt freqNodeIt)
+  {
+    this->k = k;
+    this->e = e;
+    this->freqNodeIt = freqNodeIt;
+  }
+
+  Key k;
+  E e;
+  FreqNodeIt freqNodeIt;
+};
+
+template<typename Key, typename E>
+class FreqNode
+{
+public:
+  FreqNode(const int freq)
+  {
+    this->freq = freq;
+  }
+
+  int freq;
+  std::list<CacheElement<Key, E>> cacheElements;
+};
+
+// ----------------------------------------------------------------------------
 
 #endif // C_LFU_CACHE_HPP__
