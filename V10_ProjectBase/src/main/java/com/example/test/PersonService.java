@@ -4,6 +4,8 @@ import org.apache.deltaspike.data.api.QueryResult;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,5 +26,19 @@ public class PersonService {
             }
         });
         return result.getResultList();
+    }
+    
+    public int count() {
+        return Math.toIntExact(repository.count());
+    }
+    
+    public List<Person> getSomePersons() {
+        List<Person> items = new LinkedList<Person>();
+        items.add(new Person("John", 10));
+        items.add(new Person("Jack", 20));
+        items.add(new Person("Bill", 30));
+        items.add(new Person("Hue", 40));
+        items.add(new Person("Paul", 50));
+        return items;
     }
 }
