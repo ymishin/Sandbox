@@ -81,12 +81,32 @@
             <optional>true</optional>
         </dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		
+<!-- 		<dependency> -->
+<!--   			<groupId>org.postgresql</groupId> -->
+<!--   			<artifactId>postgresql</artifactId> -->
+<!--   			<version>42.2.2</version> -->
+<!--   			<scope>runtime</scope> -->
+<!-- 		</dependency> -->
+		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
         <!-- Added to provide logging output as Flow uses -->
         <!-- the unbound SLF4J no-operation (NOP) logger implementation -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
         </dependency>
+        
+        
     </dependencies>
 
     <build>
@@ -111,6 +131,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+                <configuration>
+                  <fork>false</fork>
+                </configuration>
             </plugin>
 
             <plugin>
