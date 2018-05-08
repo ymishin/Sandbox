@@ -3,9 +3,6 @@ package com.example.test.spring;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
@@ -37,13 +34,12 @@ public class MainView extends VerticalLayout {
         		(item1, item2) -> item1.getAge().compareTo(item2.getAge()));
         
         DataProvider<Person, Void> dataProvider = DataProvider.fromCallbacks(
-                query -> {        	
-//                	Map<String, Boolean> sortOrder = new LinkedHashMap<>();
-//                    for (QuerySortOrder order : query.getSortOrders()) {
-//                    	sortOrder.put(order.getSorted(), order.getDirection().equals(SortDirection.ASCENDING));            	
-//                    }
-//                    return service.findAll(query.getOffset(), query.getLimit(), sortOrder).stream();
-                	return service.findAll().stream();
+                query -> {
+                	Map<String, Boolean> sortOrders = new LinkedHashMap<>();
+                    for (QuerySortOrder order : query.getSortOrders()) {
+                    	sortOrders.put(order.getSorted(), order.getDirection().equals(SortDirection.ASCENDING));
+                    }
+                    return service.findAll(query.getOffset(), query.getLimit(), sortOrders).stream();
                 },
         		query -> service.count());
         grid.setDataProvider(dataProvider);
