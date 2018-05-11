@@ -13,9 +13,13 @@ import javax.sql.DataSource;
 @Component
 public class MultiTenantConnectionProviderImpl implements MultiTenantConnectionProvider {
 
+  private final DataSource dataSource;
+  
   @Autowired
-  private DataSource dataSource;
-
+  MultiTenantConnectionProviderImpl(DataSource dataSource) {
+      this.dataSource = dataSource;
+  }
+  
   @Override
   public Connection getAnyConnection() throws SQLException {
     return dataSource.getConnection();
