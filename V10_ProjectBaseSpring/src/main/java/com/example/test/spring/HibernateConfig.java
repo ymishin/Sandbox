@@ -5,8 +5,6 @@ import org.hibernate.boot.SchemaAutoTooling;
 import org.hibernate.cfg.Environment;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -20,17 +18,10 @@ import javax.sql.DataSource;
 @Configuration
 public class HibernateConfig {
 
-	private final JpaProperties jpaProperties;
-
-	@Autowired
-	HibernateConfig(JpaProperties jpaProperties) {
-		this.jpaProperties = jpaProperties;
-	}  
-
 	@Bean
-	public JpaVendorAdapter jpaVendorAdapter() {	  	  	  
+	public JpaVendorAdapter jpaVendorAdapter() {
 		return new HibernateJpaVendorAdapter();
-	}  
+	}
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(
@@ -39,7 +30,6 @@ public class HibernateConfig {
 			CurrentTenantIdentifierResolver currentTenantIdentifierResolverImpl) {
 
 		Properties properties = new Properties();
-		properties.putAll(jpaProperties.getProperties());
 		properties.put(Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA);
 		properties.put(Environment.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProviderImpl);
 		properties.put(Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, currentTenantIdentifierResolverImpl);
